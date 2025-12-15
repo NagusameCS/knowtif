@@ -32,3 +32,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NTFY_TOPIC: "knowtif-knowtif-cb3e6a5c"
           NTFY_SERVER: "https://ntfy.sh"
+          DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1449991147509387284/fZT38miL1bDI47MQPnJAMpoGUs6HvElWPoSYlpWP8JC24Y8k8qvA3aKPlHcM38hLTHAW"
