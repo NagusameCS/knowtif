@@ -34,26 +34,26 @@ const performUninstall = async (): Promise<boolean> => {
         { title: 'Uninstall Knowtif', width: 55 }
     ));
     console.log();
-    
+
     const { confirm } = await inquirer.prompt([
         { type: 'confirm', name: 'confirm', message: ui.colors.error('Are you sure?'), default: false }
     ]);
-    
+
     if (!confirm) {
         ui.info('Uninstall cancelled.');
         return false;
     }
-    
+
     const results = uninstall();
-    
+
     console.log();
     if (results.projectConfig) ui.info('Removed project config');
     if (results.secureConfig) ui.info('Removed encrypted credentials');
     if (results.workflow) ui.info('Removed GitHub workflow');
-    
+
     ui.success('Knowtif uninstalled. Goodbye!');
     console.log(ui.colors.muted('  To reinstall: npx knowtif\n'));
-    
+
     return true;
 };
 
@@ -228,7 +228,7 @@ const regenerateWorkflow = async () => {
 export const runControlPanel = async () => {
     ui.clear();
     ui.header();
-    
+
     // Check for updates
     const latestVersion = await checkForUpdates();
     if (latestVersion) {
