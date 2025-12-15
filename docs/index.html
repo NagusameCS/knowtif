@@ -5,10 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>knowtif :: GitHub Notifications</title>
-    <meta name="description" content="Get notified when your GitHub changes propagate. Push, CI, Deploy - all in one command.">
+    <meta name="description"
+        content="Get notified when your GitHub changes propagate. Push, CI, Deploy - all in one command.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --black: #050505;
@@ -53,7 +56,7 @@
             right: 0;
             bottom: 0;
             z-index: -2;
-            background: 
+            background:
                 radial-gradient(ellipse 80% 50% at 50% -20%, rgba(183, 148, 246, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse 60% 40% at 80% 60%, rgba(103, 232, 249, 0.08) 0%, transparent 50%),
                 radial-gradient(ellipse 50% 30% at 20% 80%, rgba(74, 222, 128, 0.05) 0%, transparent 50%);
@@ -67,13 +70,11 @@
             right: 0;
             bottom: 0;
             z-index: -1;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0, 0, 0, 0.03) 2px,
-                rgba(0, 0, 0, 0.03) 4px
-            );
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.03) 2px,
+                    rgba(0, 0, 0, 0.03) 4px);
             pointer-events: none;
         }
 
@@ -186,13 +187,7 @@
         }
 
         h1 .highlight::after {
-            content: '_';
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+            content: '';
         }
 
         .hero-desc {
@@ -425,9 +420,17 @@
             background: var(--border);
         }
 
-        .terminal-dot.r { background: var(--red); }
-        .terminal-dot.y { background: var(--orange); }
-        .terminal-dot.g { background: var(--green); }
+        .terminal-dot.r {
+            background: var(--red);
+        }
+
+        .terminal-dot.y {
+            background: var(--orange);
+        }
+
+        .terminal-dot.g {
+            background: var(--green);
+        }
 
         .terminal-title {
             font-family: 'Space Mono', monospace;
@@ -495,9 +498,20 @@
             letter-spacing: 0.05em;
         }
 
-        .event-badge.ok { background: rgba(74, 222, 128, 0.15); color: var(--green); }
-        .event-badge.err { background: rgba(248, 113, 113, 0.15); color: var(--red); }
-        .event-badge.info { background: rgba(103, 232, 249, 0.15); color: var(--cyan); }
+        .event-badge.ok {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--green);
+        }
+
+        .event-badge.err {
+            background: rgba(248, 113, 113, 0.15);
+            color: var(--red);
+        }
+
+        .event-badge.info {
+            background: rgba(103, 232, 249, 0.15);
+            color: var(--cyan);
+        }
 
         /* CTA */
         .cta {
@@ -604,6 +618,7 @@
                 <a href="#features">features</a>
                 <a href="#channels">channels</a>
                 <a href="#events">events</a>
+                <a href="https://www.npmjs.com/package/knowtif">npm</a>
                 <a href="https://github.com/NagusameCS/knowtif">github</a>
             </div>
         </div>
@@ -614,10 +629,10 @@
             <div class="hero-content">
                 <div class="hero-tag">GitHub Notifications</div>
                 <h1>know<span class="highlight">tif</span></h1>
-                <p class="hero-desc">Get notified when your code propagates. Push, CI, Deploy, Health Check — all in one command.</p>
+                <p class="hero-desc">Get notified when your code propagates. Push, CI, Deploy, Health Check — all in one
+                    command.</p>
                 <div class="hero-cmd">
                     <code>npx knowtif</code>
-                    <span class="cursor"></span>
                 </div>
             </div>
 
@@ -638,6 +653,13 @@
                     <span class="stat-value">&lt;1m</span>
                     <span class="stat-label">Setup</span>
                 </div>
+            </div>
+
+            <div class="badges-row" style="margin-top: 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <img src="https://raw.githubusercontent.com/NagusameCS/knowtif/main/.linehook/badges/lines.svg" alt="Lines" style="height: 20px;">
+                <img src="https://raw.githubusercontent.com/NagusameCS/knowtif/main/.linehook/badges/files.svg" alt="Files" style="height: 20px;">
+                <img src="https://raw.githubusercontent.com/NagusameCS/knowtif/main/.linehook/badges/code.svg" alt="Code" style="height: 20px;">
+                <img src="https://img.shields.io/npm/v/knowtif?color=b794f6&style=flat-square&label=npm" alt="npm version" style="height: 20px;">
             </div>
         </header>
 
@@ -793,7 +815,8 @@
                     <div><span class="output">[OK] Setup complete</span></div>
                     <div></div>
                     <div><span class="comment"># Commit and push</span></div>
-                    <div><span class="prompt">$</span> <span class="cmd">git add .github/workflows/knowtif.yml</span></div>
+                    <div><span class="prompt">$</span> <span class="cmd">git add .github/workflows/knowtif.yml</span>
+                    </div>
                     <div><span class="prompt">$</span> <span class="cmd">git commit -m "Add notifications"</span></div>
                     <div><span class="prompt">$</span> <span class="cmd">git push</span></div>
                     <div><span class="output">[OK] Notifications active</span></div>
@@ -811,7 +834,7 @@
     <footer>
         <div class="container" style="display: flex; justify-content: space-between; width: 100%;">
             <p>knowtif :: MIT License</p>
-            <p><a href="https://github.com/NagusameCS/knowtif">github</a></p>
+            <p><a href="https://www.npmjs.com/package/knowtif">npm</a> :: <a href="https://github.com/NagusameCS/knowtif">github</a></p>
         </div>
     </footer>
 </body>

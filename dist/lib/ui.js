@@ -18,42 +18,42 @@ const BOX = {
     cross: '┼',
     doubleLine: '═',
 };
-// Refined monochrome palette with accent
+// Space Mono inspired palette (matches website)
 exports.colors = {
-    primary: chalk_1.default.hex('#A855F7'), // Vibrant purple
-    secondary: chalk_1.default.hex('#38BDF8'), // Sky blue
-    success: chalk_1.default.hex('#22C55E'), // Green
-    warning: chalk_1.default.hex('#EAB308'), // Yellow
-    error: chalk_1.default.hex('#EF4444'), // Red
-    muted: chalk_1.default.hex('#64748B'), // Slate gray
-    text: chalk_1.default.hex('#E2E8F0'), // Light slate
-    dim: chalk_1.default.hex('#475569'), // Dim slate
-    bright: chalk_1.default.hex('#F8FAFC'), // Almost white
+    primary: chalk_1.default.hex('#b794f6'), // Purple (--purple)
+    secondary: chalk_1.default.hex('#67e8f9'), // Cyan (--cyan)
+    success: chalk_1.default.hex('#4ade80'), // Green (--green)
+    warning: chalk_1.default.hex('#fb923c'), // Orange (--orange)
+    error: chalk_1.default.hex('#f87171'), // Red (--red)
+    muted: chalk_1.default.hex('#888888'), // Gray (--text-dim)
+    text: chalk_1.default.hex('#eeeeee'), // Light (--text)
+    dim: chalk_1.default.hex('#555555'), // Dim (--text-xdim)
+    bright: chalk_1.default.hex('#ffffff'), // White
 };
 // Render width helper (strips ANSI codes)
 const stripAnsi = (str) => str.replace(/\x1B\[[0-9;]*m/g, '');
-// ASCII icons - no emojis
+// ASCII icons - no emojis, Space Mono style
 exports.icons = {
     check: exports.colors.success('[OK]'),
     cross: exports.colors.error('[X]'),
     arrow: exports.colors.primary('->'),
-    bullet: exports.colors.dim('*'),
-    // Service icons as text
-    discord: exports.colors.secondary('[DIS]'),
-    phone: exports.colors.secondary('[PHN]'),
-    browser: exports.colors.secondary('[WEB]'),
-    email: exports.colors.secondary('[EML]'),
-    webhook: exports.colors.secondary('[API]'),
+    bullet: exports.colors.dim('::'),
+    // Service icons as text tags (like website)
+    discord: exports.colors.warning('[DIS]'),
+    phone: exports.colors.warning('[PHN]'),
+    browser: exports.colors.warning('[WEB]'),
+    email: exports.colors.warning('[EML]'),
+    webhook: exports.colors.warning('[API]'),
     // Action icons
-    settings: '[CFG]',
+    settings: exports.colors.secondary('[CFG]'),
     lock: exports.colors.dim('[ENC]'),
     unlock: '[DEC]',
     trash: exports.colors.error('[DEL]'),
     add: exports.colors.success('[ADD]'),
     edit: '[EDT]',
-    test: exports.colors.primary('[TST]'),
+    test: exports.colors.secondary('[TST]'),
     rocket: exports.colors.success('[GO]'),
-    bell: '[NFY]',
+    bell: exports.colors.secondary('[NFY]'),
     on: exports.colors.success('[ON]'),
     off: exports.colors.muted('[OFF]'),
     dot: exports.colors.primary('::'),
@@ -99,10 +99,10 @@ const box = (content, options = {}) => {
 exports.box = box;
 const header = () => {
     console.log();
-    console.log(exports.colors.dim('  ┌─────────────────────────────────────┐'));
-    console.log(exports.colors.dim('  │') + exports.colors.primary('  K N O W T I F                       ') + exports.colors.dim('│'));
-    console.log(exports.colors.dim('  │') + exports.colors.muted('  GitHub Notifications Made Simple    ') + exports.colors.dim('│'));
-    console.log(exports.colors.dim('  └─────────────────────────────────────┘'));
+    console.log(exports.colors.dim('  ┌') + exports.colors.dim('─'.repeat(38)) + exports.colors.dim('┐'));
+    console.log(exports.colors.dim('  │') + exports.colors.primary(' > ') + exports.colors.text('know') + exports.colors.primary('tif') + ' '.repeat(27) + exports.colors.dim('│'));
+    console.log(exports.colors.dim('  │') + exports.colors.muted('   GitHub Notifications') + ' '.repeat(14) + exports.colors.dim('│'));
+    console.log(exports.colors.dim('  └') + exports.colors.dim('─'.repeat(38)) + exports.colors.dim('┘'));
     console.log();
 };
 exports.header = header;
