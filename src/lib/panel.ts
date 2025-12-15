@@ -410,10 +410,10 @@ const resetConfig = async () => {
     if (confirm) {
         const fs = await import('fs');
         const path = await import('path');
-        
+
         try { fs.unlinkSync(path.join(process.cwd(), '.knowtif.json')); } catch { }
         try { fs.unlinkSync(path.join(process.cwd(), '.github', 'workflows', 'knowtif.yml')); } catch { }
-        
+
         console.log(chalk.green('\n  Config reset!\n'));
     }
 };

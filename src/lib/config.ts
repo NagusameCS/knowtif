@@ -6,7 +6,7 @@ export interface KnowtifConfig {
     // Events
     events: string[];
     branches: string[];
-    
+
     // Destinations
     discord?: {
         webhook: string;
@@ -35,10 +35,10 @@ export interface KnowtifConfig {
         secret?: string;
         enabled: boolean;
     };
-    
+
     // Health check
     healthCheckUrl?: string;
-    
+
     // Meta
     installed: boolean;
     repoOwner?: string;
@@ -77,14 +77,14 @@ export const getConfig = (): KnowtifConfig => {
 export const saveConfig = (config: Partial<KnowtifConfig>, projectLevel = true) => {
     const current = getConfig();
     const updated = { ...current, ...config };
-    
+
     if (projectLevel) {
         const projectPath = getProjectConfigPath();
         fs.writeFileSync(projectPath, JSON.stringify(updated, null, 2));
     } else {
         store.store = updated;
     }
-    
+
     return updated;
 };
 

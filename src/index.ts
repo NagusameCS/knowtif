@@ -54,7 +54,7 @@ program
     .action(async () => {
         const config = getConfig();
         console.log(chalk.blue.bold('\n  Knowtif Status\n'));
-        
+
         if (!config.installed) {
             console.log(chalk.yellow('  Not configured. Run: knowtif setup\n'));
             return;
@@ -62,14 +62,14 @@ program
 
         console.log(chalk.white('  Events:'));
         config.events.forEach(e => console.log(chalk.gray(`    - ${e}`)));
-        
+
         console.log(chalk.white('\n  Destinations:'));
         if (config.discord?.enabled) console.log(chalk.green('    - Discord'));
         if (config.pushover?.enabled) console.log(chalk.green('    - Pushover'));
         if (config.ntfy?.enabled) console.log(chalk.green(`    - ntfy.sh (${config.ntfy.topic})`));
         if (config.email?.enabled) console.log(chalk.green(`    - Email (${config.email.to})`));
         if (config.webhook?.enabled) console.log(chalk.green('    - Webhook'));
-        
+
         console.log('');
     });
 
