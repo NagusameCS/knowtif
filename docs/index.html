@@ -610,7 +610,9 @@
         }
 
         .extension-icon {
-            font-size: 1.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.25rem;
+            color: var(--cyan);
             margin-bottom: 1rem;
         }
 
@@ -722,7 +724,7 @@
 
         .popup {
             position: fixed;
-            top: -200px;
+            top: -300px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--dark);
@@ -730,12 +732,15 @@
             padding: 2rem 3rem;
             z-index: 1001;
             text-align: center;
-            transition: top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0s 0.4s;
             box-shadow: 0 20px 60px rgba(183, 148, 246, 0.2);
+            visibility: hidden;
         }
 
         .popup.active {
             top: 80px;
+            visibility: visible;
+            transition: top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0s 0s;
         }
 
         .popup::before {
@@ -749,7 +754,9 @@
         }
 
         .popup-icon {
-            font-size: 2.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            color: var(--purple);
             margin-bottom: 1rem;
         }
 
@@ -929,22 +936,22 @@
 
             <div class="extension-grid">
                 <div class="extension-feature">
-                    <div class="extension-icon">🔔</div>
+                    <div class="extension-icon">[!]</div>
                     <h3>Native Notifications</h3>
                     <p>Browser push notifications for all your GitHub events</p>
                 </div>
                 <div class="extension-feature">
-                    <div class="extension-icon">⚡</div>
+                    <div class="extension-icon">[>]</div>
                     <h3>Instant Updates</h3>
                     <p>Real-time alerts as your CI runs and deployments complete</p>
                 </div>
                 <div class="extension-feature">
-                    <div class="extension-icon">🎯</div>
+                    <div class="extension-icon">[*]</div>
                     <h3>Smart Filtering</h3>
                     <p>Customize which events trigger notifications</p>
                 </div>
                 <div class="extension-feature">
-                    <div class="extension-icon">🔒</div>
+                    <div class="extension-icon">[#]</div>
                     <h3>Privacy First</h3>
                     <p>No data collection - everything stays in your browser</p>
                 </div>
@@ -1292,7 +1299,7 @@
     <!-- Coming Soon Popup -->
     <div class="popup-overlay" id="popupOverlay"></div>
     <div class="popup" id="popup">
-        <div class="popup-icon">🚀</div>
+        <div class="popup-icon">[^]</div>
         <h3>Coming Soon</h3>
         <p>The browser extension is under development.<br>Check back soon!</p>
         <button class="popup-close" id="popupClose">Got it</button>
