@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setupConfig = exports.getActionConfig = exports.getEnabledDestinations = exports.hasDestinations = exports.toggleDestination = exports.removeDestination = exports.addDestination = exports.saveConfig = exports.getConfig = exports.decrypt = exports.encrypt = void 0;
+exports.setupConfig = exports.uninstall = exports.getActionConfig = exports.getEnabledDestinations = exports.hasDestinations = exports.toggleDestination = exports.removeDestination = exports.addDestination = exports.saveConfig = exports.getConfig = exports.decrypt = exports.encrypt = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const os = __importStar(require("os"));
@@ -223,6 +223,32 @@ const getActionConfig = () => {
     };
 };
 exports.getActionConfig = getActionConfig;
+// Uninstall - remove all config and workflow files
+const uninstall = () => {
+    const results = { projectConfig: false, secureConfig: false, workflow: false };
+    // Remove project config
+    const projectPath = getProjectConfigPath();
+    if (fs.existsSync(projectPath)) {
+        fs.unlinkSync(projectPath);
+        results.projectConfig = true;
+    }
+    // Remove secure credentials
+    const securePath = getSecureConfigPath();
+    if (fs.existsSync(securePath)) {
+        fs.unlinkSync(securePath);
+        results.secureConfig = true;
+    }
+    // Remove workflow file
+    const workflowPath = path.join(process.cwd(), '.github', 'workflows', 'knowtif.yml');
+    if (fs.existsSync(workflowPath)) {
+        fs.unlinkSync(workflowPath);
+        results.workflow = true;
+    }
+    // Clear conf store
+    store.clear();
+    return results;
+};
+exports.uninstall = uninstall;
 // Legacy support
 const setupConfig = async () => {
     const { runSetup } = await Promise.resolve().then(() => __importStar(require('./setup')));

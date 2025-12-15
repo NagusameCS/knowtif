@@ -230,6 +230,37 @@ export const getActionConfig = () => {
     };
 };
 
+// Uninstall - remove all config and workflow files
+export const uninstall = (): { projectConfig: boolean; secureConfig: boolean; workflow: boolean } => {
+    const results = { projectConfig: false, secureConfig: false, workflow: false };
+    
+    // Remove project config
+    const projectPath = getProjectConfigPath();
+    if (fs.existsSync(projectPath)) {
+        fs.unlinkSync(projectPath);
+        results.projectConfig = true;
+    }
+    
+    // Remove secure credentials
+    const securePath = getSecureConfigPath();
+    if (fs.existsSync(securePath)) {
+        fs.unlinkSync(securePath);
+        results.secureConfig = true;
+    }
+    
+    // Remove workflow file
+    const workflowPath = path.join(process.cwd(), '.github', 'workflows', 'knowtif.yml');
+    if (fs.existsSync(workflowPath)) {
+        fs.unlinkSync(workflowPath);
+        results.workflow = true;
+    }
+    
+    // Clear conf store
+    store.clear();
+    
+    return results;
+};
+
 // Legacy support
 export const setupConfig = async () => {
     const { runSetup } = await import('./setup');

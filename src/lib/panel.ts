@@ -1,8 +1,61 @@
 import inquirer from 'inquirer';
 import axios from 'axios';
-import { getConfig, saveConfig, addDestination, removeDestination, toggleDestination, Destination } from './config';
+import { execSync } from 'child_process';
+import { getConfig, saveConfig, addDestination, removeDestination, toggleDestination, uninstall, Destination } from './config';
 import * as ui from './ui';
 import { runSetup } from './setup';
+
+const CURRENT_VERSION = '1.0.0';
+
+const checkForUpdates = async (): Promise<string | null> => {
+    try {
+        const response = await axios.get('https://registry.npmjs.org/knowtif/latest', { timeout: 3000 });
+        const latestVersion = response.data.version;
+        if (latestVersion !== CURRENT_VERSION) {
+            return latestVersion;
+        }
+    } catch {
+        // Silently fail - network might not be available
+    }
+    return null;
+};
+
+const performUninstall = async (): Promise<boolean> => {
+    console.log();
+    console.log(ui.box(
+        `${ui.colors.error('This will remove:')}
+
+` +
+        `${ui.colors.muted('*')} Project config (.knowtif.json)
+` +
+        `${ui.colors.muted('*')} Encrypted credentials (~/.knowtif/)
+` +
+        `${ui.colors.muted('*')} GitHub workflow (.github/workflows/knowtif.yml)`,
+        { title: 'Uninstall Knowtif', width: 55 }
+    ));
+    console.log();
+    
+    const { confirm } = await inquirer.prompt([
+        { type: 'confirm', name: 'confirm', message: ui.colors.error('Are you sure?'), default: false }
+    ]);
+    
+    if (!confirm) {
+        ui.info('Uninstall cancelled.');
+        return false;
+    }
+    
+    const results = uninstall();
+    
+    console.log();
+    if (results.projectConfig) ui.info('Removed project config');
+    if (results.secureConfig) ui.info('Removed encrypted credentials');
+    if (results.workflow) ui.info('Removed GitHub workflow');
+    
+    ui.success('Knowtif uninstalled. Goodbye!');
+    console.log(ui.colors.muted('  To reinstall: npx knowtif\n'));
+    
+    return true;
+};
 
 const showStatus = () => {
     const config = getConfig();
@@ -175,6 +228,13 @@ const regenerateWorkflow = async () => {
 export const runControlPanel = async () => {
     ui.clear();
     ui.header();
+    
+    // Check for updates
+    const latestVersion = await checkForUpdates();
+    if (latestVersion) {
+        console.log(ui.colors.warning(`  Update available: ${CURRENT_VERSION} -> ${latestVersion}`));
+        console.log(ui.colors.muted(`  Run: npm install -g knowtif@latest\n`));
+    }
 
     const config = getConfig();
 
@@ -201,6 +261,7 @@ export const runControlPanel = async () => {
                     { name: `${ui.icons.settings} Manage destinations`, value: 'manage' },
                     { name: `${ui.icons.bell} Change events`, value: 'events' },
                     { name: `${ui.icons.rocket} Regenerate workflow`, value: 'regenerate' },
+                    { name: `${ui.icons.trash} Uninstall`, value: 'uninstall' },
                     { name: ui.colors.muted('Exit'), value: 'exit' },
                 ],
             },
@@ -231,6 +292,12 @@ export const runControlPanel = async () => {
                 break;
             case 'regenerate':
                 await regenerateWorkflow();
+                break;
+            case 'uninstall':
+                const uninstalled = await performUninstall();
+                if (uninstalled) {
+                    running = false;
+                }
                 break;
             case 'exit':
                 running = false;
