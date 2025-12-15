@@ -176,6 +176,22 @@ When running in GitHub Actions, these environment variables are used:
 3. **Notifications** are sent to your configured channels
 4. **No server needed** - everything runs on GitHub's infrastructure
 
+## Browser Extension
+
+Get knowtif notifications directly in your browser with the companion extension.
+
+**[knowtif-extension](https://github.com/NagusameCS/knowtif-extension)** - Real-time alerts without leaving your workflow.
+
+![Lines](https://raw.githubusercontent.com/NagusameCS/knowtif-extension/main/.linehook/badges/lines.svg)
+![Files](https://raw.githubusercontent.com/NagusameCS/knowtif-extension/main/.linehook/badges/files.svg)
+![Code](https://raw.githubusercontent.com/NagusameCS/knowtif-extension/main/.linehook/badges/code.svg)
+![Chars](https://raw.githubusercontent.com/NagusameCS/knowtif-extension/main/.linehook/badges/chars.svg)
+![Languages](https://raw.githubusercontent.com/NagusameCS/knowtif-extension/main/.linehook/badges/languages.svg)
+![Assets](https://raw.githubusercontent.com/NagusameCS/knowtif-extension/main/.linehook/badges/assets.svg)
+![Pages](https://raw.githubusercontent.com/NagusameCS/knowtif-extension/main/.linehook/badges/pages.svg)
+
+Available for Firefox, Edge, and Opera *(coming soon)*.
+
 ## License
 
 ISC
