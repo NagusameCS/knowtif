@@ -3,76 +3,88 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clear = exports.table = exports.spinner = exports.warn = exports.info = exports.error = exports.success = exports.menuItem = exports.statusBadge = exports.divider = exports.header = exports.box = exports.icons = exports.colors = void 0;
+exports.clear = exports.list = exports.section = exports.keyValue = exports.progress = exports.table = exports.spinner = exports.warn = exports.info = exports.error = exports.success = exports.menuItem = exports.statusBadge = exports.divider = exports.header = exports.box = exports.icons = exports.colors = void 0;
 const chalk_1 = __importDefault(require("chalk"));
 // Box drawing characters
 const BOX = {
-    topLeft: '╭',
-    topRight: '╮',
-    bottomLeft: '╰',
-    bottomRight: '╯',
+    topLeft: '┌',
+    topRight: '┐',
+    bottomLeft: '└',
+    bottomRight: '┘',
     horizontal: '─',
     vertical: '│',
     teeRight: '├',
     teeLeft: '┤',
+    cross: '┼',
+    doubleLine: '═',
 };
-// Colors
+// Refined monochrome palette with accent
 exports.colors = {
-    primary: chalk_1.default.hex('#7C3AED'), // Purple
-    secondary: chalk_1.default.hex('#06B6D4'), // Cyan
-    success: chalk_1.default.hex('#10B981'), // Green
-    warning: chalk_1.default.hex('#F59E0B'), // Orange
+    primary: chalk_1.default.hex('#A855F7'), // Vibrant purple
+    secondary: chalk_1.default.hex('#38BDF8'), // Sky blue
+    success: chalk_1.default.hex('#22C55E'), // Green
+    warning: chalk_1.default.hex('#EAB308'), // Yellow
     error: chalk_1.default.hex('#EF4444'), // Red
-    muted: chalk_1.default.hex('#6B7280'), // Gray
-    text: chalk_1.default.hex('#F3F4F6'), // Light gray
+    muted: chalk_1.default.hex('#64748B'), // Slate gray
+    text: chalk_1.default.hex('#E2E8F0'), // Light slate
+    dim: chalk_1.default.hex('#475569'), // Dim slate
+    bright: chalk_1.default.hex('#F8FAFC'), // Almost white
 };
-// Icons
+// Render width helper (strips ANSI codes)
+const stripAnsi = (str) => str.replace(/\x1B\[[0-9;]*m/g, '');
+// ASCII icons - no emojis
 exports.icons = {
-    check: exports.colors.success('✓'),
-    cross: exports.colors.error('✗'),
-    arrow: exports.colors.primary('→'),
-    bullet: exports.colors.muted('•'),
-    discord: '🎮',
-    phone: '📱',
-    browser: '🌐',
-    email: '📧',
-    webhook: '🔗',
-    settings: '⚙️',
-    lock: '🔒',
-    unlock: '🔓',
-    trash: '🗑️',
-    add: '➕',
-    edit: '✏️',
-    test: '🧪',
-    rocket: '🚀',
-    bell: '🔔',
+    check: exports.colors.success('[OK]'),
+    cross: exports.colors.error('[X]'),
+    arrow: exports.colors.primary('->'),
+    bullet: exports.colors.dim('*'),
+    // Service icons as text
+    discord: exports.colors.secondary('[DIS]'),
+    phone: exports.colors.secondary('[PHN]'),
+    browser: exports.colors.secondary('[WEB]'),
+    email: exports.colors.secondary('[EML]'),
+    webhook: exports.colors.secondary('[API]'),
+    // Action icons
+    settings: '[CFG]',
+    lock: exports.colors.dim('[ENC]'),
+    unlock: '[DEC]',
+    trash: exports.colors.error('[DEL]'),
+    add: exports.colors.success('[ADD]'),
+    edit: '[EDT]',
+    test: exports.colors.primary('[TST]'),
+    rocket: exports.colors.success('[GO]'),
+    bell: '[NFY]',
+    on: exports.colors.success('[ON]'),
+    off: exports.colors.muted('[OFF]'),
+    dot: exports.colors.primary('::'),
 };
 const box = (content, options = {}) => {
-    const { title, width = 60, padding = 1, borderColor = exports.colors.primary } = options;
+    const { title, width = 60, padding = 1, borderColor = exports.colors.dim, style = 'single' } = options;
     const lines = content.split('\n');
     const innerWidth = width - 2;
+    const hChar = style === 'double' ? '═' : BOX.horizontal;
     const pad = ' '.repeat(padding);
     const emptyLine = borderColor(BOX.vertical) + ' '.repeat(innerWidth) + borderColor(BOX.vertical);
     // Top border
-    let result = borderColor(BOX.topLeft);
+    let result = borderColor(style === 'double' ? '╔' : BOX.topLeft);
     if (title) {
-        const titlePadded = ` ${title} `;
-        const remaining = innerWidth - titlePadded.length;
+        const titleText = ` ${title} `;
+        const remaining = innerWidth - titleText.length;
         const left = Math.floor(remaining / 2);
         const right = remaining - left;
-        result += borderColor(BOX.horizontal.repeat(left)) + exports.colors.text.bold(titlePadded) + borderColor(BOX.horizontal.repeat(right));
+        result += borderColor(hChar.repeat(left)) + exports.colors.bright.bold(titleText) + borderColor(hChar.repeat(right));
     }
     else {
-        result += borderColor(BOX.horizontal.repeat(innerWidth));
+        result += borderColor(hChar.repeat(innerWidth));
     }
-    result += borderColor(BOX.topRight) + '\n';
+    result += borderColor(style === 'double' ? '╗' : BOX.topRight) + '\n';
     // Padding top
     for (let i = 0; i < padding; i++) {
         result += emptyLine + '\n';
     }
     // Content
     for (const line of lines) {
-        const stripped = line.replace(/\x1B\[[0-9;]*m/g, '');
+        const stripped = stripAnsi(line);
         const paddingNeeded = innerWidth - stripped.length - (padding * 2);
         result += borderColor(BOX.vertical) + pad + line + ' '.repeat(Math.max(0, paddingNeeded)) + pad + borderColor(BOX.vertical) + '\n';
     }
@@ -81,36 +93,36 @@ const box = (content, options = {}) => {
         result += emptyLine + '\n';
     }
     // Bottom border
-    result += borderColor(BOX.bottomLeft) + borderColor(BOX.horizontal.repeat(innerWidth)) + borderColor(BOX.bottomRight);
+    result += borderColor(style === 'double' ? '╚' : BOX.bottomLeft) + borderColor(hChar.repeat(innerWidth)) + borderColor(style === 'double' ? '╝' : BOX.bottomRight);
     return result;
 };
 exports.box = box;
 const header = () => {
-    const logo = `
-  ${exports.colors.primary('╦╔═')}${exports.colors.secondary('╔╗╔╔═╗╦ ╦╔╦╗╦╔═╗')}
-  ${exports.colors.primary('╠╩╗')}${exports.colors.secondary('║║║║ ║║║║ ║ ║╠╣ ')}
-  ${exports.colors.primary('╩ ╩')}${exports.colors.secondary('╝╚╝╚═╝╚╩╝ ╩ ╩╚  ')}
-`;
-    console.log(logo);
-    console.log(exports.colors.muted('  GitHub Notifications Made Simple\n'));
+    console.log();
+    console.log(exports.colors.dim('  ┌─────────────────────────────────────┐'));
+    console.log(exports.colors.dim('  │') + exports.colors.primary('  K N O W T I F                       ') + exports.colors.dim('│'));
+    console.log(exports.colors.dim('  │') + exports.colors.muted('  GitHub Notifications Made Simple    ') + exports.colors.dim('│'));
+    console.log(exports.colors.dim('  └─────────────────────────────────────┘'));
+    console.log();
 };
 exports.header = header;
-const divider = (width = 50) => {
-    console.log(exports.colors.muted('─'.repeat(width)));
+const divider = (width = 50, style = 'light') => {
+    const char = style === 'heavy' ? '═' : '─';
+    console.log(exports.colors.dim('  ' + char.repeat(width)));
 };
 exports.divider = divider;
 const statusBadge = (enabled, label) => {
     if (enabled) {
-        return `${exports.colors.success('●')} ${exports.colors.text(label)}`;
+        return `${exports.colors.success('+')} ${exports.colors.text(label)}`;
     }
-    return `${exports.colors.muted('○')} ${exports.colors.muted(label)}`;
+    return `${exports.colors.dim('-')} ${exports.colors.muted(label)}`;
 };
 exports.statusBadge = statusBadge;
 const menuItem = (key, label, description) => {
     const keyPart = exports.colors.primary(`[${key}]`);
     const labelPart = exports.colors.text(label);
     if (description) {
-        return `  ${keyPart} ${labelPart} ${exports.colors.muted(`- ${description}`)}`;
+        return `  ${keyPart} ${labelPart} ${exports.colors.muted('- ' + description)}`;
     }
     return `  ${keyPart} ${labelPart}`;
 };
@@ -132,21 +144,21 @@ const warn = (message) => {
 };
 exports.warn = warn;
 const spinner = async (message, fn) => {
-    const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+    const frames = ['|', '/', '-', '\\'];
     let i = 0;
     const interval = setInterval(() => {
         process.stdout.write(`\r  ${exports.colors.primary(frames[i])} ${exports.colors.muted(message)}`);
         i = (i + 1) % frames.length;
-    }, 80);
+    }, 100);
     try {
         const result = await fn();
         clearInterval(interval);
-        process.stdout.write(`\r  ${exports.icons.check} ${exports.colors.success(message)}\n`);
+        process.stdout.write(`\r  ${exports.icons.check} ${exports.colors.success(message)}          \n`);
         return result;
     }
     catch (err) {
         clearInterval(interval);
-        process.stdout.write(`\r  ${exports.icons.cross} ${exports.colors.error(message)}\n`);
+        process.stdout.write(`\r  ${exports.icons.cross} ${exports.colors.error(message)}          \n`);
         throw err;
     }
 };
@@ -156,12 +168,36 @@ const table = (data) => {
     for (const row of data) {
         const label = exports.colors.muted(row.label.padEnd(maxLabel));
         const status = row.status !== undefined
-            ? (row.status ? exports.colors.success(' ✓') : exports.colors.error(' ✗'))
+            ? (row.status ? exports.colors.success(' +') : exports.colors.error(' -'))
             : '';
         console.log(`  ${label}  ${exports.colors.text(row.value)}${status}`);
     }
 };
 exports.table = table;
+const progress = (current, total, width = 30) => {
+    const filled = Math.round((current / total) * width);
+    const empty = width - filled;
+    const bar = exports.colors.primary('#'.repeat(filled)) + exports.colors.dim('.'.repeat(empty));
+    const pct = Math.round((current / total) * 100);
+    return `[${bar}] ${exports.colors.muted(pct + '%')}`;
+};
+exports.progress = progress;
+const keyValue = (key, value, keyWidth = 15) => {
+    return `  ${exports.colors.muted(key.padEnd(keyWidth))} ${exports.colors.text(value)}`;
+};
+exports.keyValue = keyValue;
+const section = (title) => {
+    console.log();
+    console.log(exports.colors.bright.bold(`  ${title}`));
+    console.log(exports.colors.dim('  ' + '─'.repeat(title.length + 2)));
+};
+exports.section = section;
+const list = (items, prefix) => {
+    for (const item of items) {
+        console.log(`  ${prefix || exports.colors.dim('*')} ${exports.colors.text(item)}`);
+    }
+};
+exports.list = list;
 const clear = () => {
     console.clear();
 };

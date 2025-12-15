@@ -24,7 +24,7 @@ const setupDiscord = async (): Promise<Destination | null> => {
     console.log(ui.box(
         `${ui.icons.discord} Discord Webhook Setup\n\n` +
         `${ui.colors.muted('1.')} Open Discord and go to your server\n` +
-        `${ui.colors.muted('2.')} Server Settings ${ui.icons.arrow} Integrations ${ui.icons.arrow} Webhooks\n` +
+        `${ui.colors.muted('2.')} Server Settings -> Integrations -> Webhooks\n` +
         `${ui.colors.muted('3.')} Click "New Webhook" and copy the URL`,
         { title: 'Discord', width: 55 }
     ));
@@ -37,7 +37,7 @@ const setupDiscord = async (): Promise<Destination | null> => {
             message: ui.colors.primary('Webhook URL:'),
             validate: (input: string) => {
                 if (!input) return 'Webhook URL is required';
-                if (!input.startsWith('https://discord.com/api/webhooks/') && 
+                if (!input.startsWith('https://discord.com/api/webhooks/') &&
                     !input.startsWith('https://discordapp.com/api/webhooks/')) {
                     return 'Invalid URL. Should start with https://discord.com/api/webhooks/';
                 }
@@ -142,7 +142,7 @@ const setupPushover = async (): Promise<Destination | null> => {
 };
 
 const setupNtfy = async (repoInfo: { owner: string; repo: string } | null): Promise<Destination | null> => {
-    const defaultTopic = repoInfo 
+    const defaultTopic = repoInfo
         ? `knowtif-${repoInfo.repo}-${crypto.createHash('sha256').update(`${repoInfo.owner}/${repoInfo.repo}`).digest('hex').substring(0, 8)}`
         : `knowtif-${crypto.randomBytes(4).toString('hex')}`;
 
@@ -261,7 +261,7 @@ const setupWebhook = async (): Promise<Destination | null> => {
 // Generate GitHub Actions workflow
 const generateWorkflow = (config: ReturnType<typeof getConfig>) => {
     const events = config.events || ['push', 'workflow_run'];
-    
+
     let triggers = '';
     if (events.includes('push')) {
         const branches = (config.branches || ['main', 'master']).map(b => `"${b}"`).join(', ');
@@ -282,7 +282,7 @@ const generateWorkflow = (config: ReturnType<typeof getConfig>) => {
 
     // Build env vars from destinations
     const envLines: string[] = ['          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}'];
-    
+
     for (const dest of config.destinations.filter(d => d.enabled)) {
         switch (dest.type) {
             case 'discord':
@@ -441,7 +441,7 @@ export const runSetup = async () => {
 
     // Step 3: Generate workflow
     const config = getConfig();
-    
+
     if (config.destinations.length === 0) {
         ui.error('No destinations configured. Run setup again.');
         return;
@@ -462,7 +462,7 @@ export const runSetup = async () => {
     console.log();
     ui.divider();
     console.log();
-    
+
     console.log(ui.box(
         `${ui.icons.check} ${ui.colors.success.bold('Setup Complete!')}\n\n` +
         `${ui.colors.text('Destinations:')} ${config.destinations.map(d => d.name).join(', ')}\n` +

@@ -26,12 +26,12 @@ const testDestination = async (dest: Destination): Promise<boolean> => {
                 });
                 return true;
             case 'ntfy':
-                await axios.post(`${dest.config.server}/${dest.config.topic}`, 
+                await axios.post(`${dest.config.server}/${dest.config.topic}`,
                     'Your GitHub notifications are working!', {
-                    headers: { 
-                        'Title': 'Knowtif Test', 
-                        'Priority': '3', 
-                        'Tags': 'white_check_mark' 
+                    headers: {
+                        'Title': 'Knowtif Test',
+                        'Priority': '3',
+                        'Tags': 'white_check_mark'
                     },
                 });
                 return true;
@@ -56,16 +56,16 @@ const testDestination = async (dest: Destination): Promise<boolean> => {
 export const testNotifications = async () => {
     ui.clear();
     ui.header();
-    
+
     const config = getConfig();
-    
+
     if (config.destinations.length === 0) {
         ui.error('No destinations configured. Run "npx knowtif setup" first.');
         return;
     }
 
     const enabled = config.destinations.filter(d => d.enabled);
-    
+
     if (enabled.length === 0) {
         ui.error('No enabled destinations. Enable one in the control panel.');
         return;
@@ -75,7 +75,7 @@ export const testNotifications = async () => {
 
     for (const dest of enabled) {
         const icon = getIcon(dest.type);
-        
+
         try {
             const success = await ui.spinner(`Testing ${dest.name}`, async () => {
                 const result = await testDestination(dest);

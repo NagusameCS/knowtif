@@ -26,7 +26,7 @@ export interface KnowtifConfig {
     installed: boolean;
     repoOwner?: string;
     repoName?: string;
-    
+
     // Encryption
     encryptionKey?: string;
 }
@@ -74,7 +74,7 @@ export const decrypt = (text: string): string => {
 const encryptDestination = (dest: Destination): Destination => {
     const sensitiveKeys = ['webhook', 'token', 'pass', 'secret', 'password', 'apiKey'];
     const encryptedConfig: Record<string, string> = {};
-    
+
     for (const [key, value] of Object.entries(dest.config)) {
         if (sensitiveKeys.some(sk => key.toLowerCase().includes(sk))) {
             encryptedConfig[key] = encrypt(value);
@@ -82,7 +82,7 @@ const encryptDestination = (dest: Destination): Destination => {
             encryptedConfig[key] = value;
         }
     }
-    
+
     return { ...dest, config: encryptedConfig };
 };
 
@@ -90,7 +90,7 @@ const encryptDestination = (dest: Destination): Destination => {
 const decryptDestination = (dest: Destination): Destination => {
     const sensitiveKeys = ['webhook', 'token', 'pass', 'secret', 'password', 'apiKey'];
     const decryptedConfig: Record<string, string> = {};
-    
+
     for (const [key, value] of Object.entries(dest.config)) {
         if (sensitiveKeys.some(sk => key.toLowerCase().includes(sk)) && value.includes(':')) {
             decryptedConfig[key] = decrypt(value);
@@ -98,7 +98,7 @@ const decryptDestination = (dest: Destination): Destination => {
             decryptedConfig[key] = value;
         }
     }
-    
+
     return { ...dest, config: decryptedConfig };
 };
 
@@ -118,7 +118,7 @@ export const getConfig = (): KnowtifConfig => {
     // First check for project-level config
     const projectPath = getProjectConfigPath();
     let config = { ...defaultConfig };
-    
+
     if (fs.existsSync(projectPath)) {
         try {
             const content = fs.readFileSync(projectPath, 'utf-8');
@@ -128,7 +128,7 @@ export const getConfig = (): KnowtifConfig => {
             // Fall through
         }
     }
-    
+
     // Load encrypted credentials from secure location
     const securePath = getSecureConfigPath();
     if (fs.existsSync(securePath)) {
@@ -142,14 +142,14 @@ export const getConfig = (): KnowtifConfig => {
             // Fall through
         }
     }
-    
+
     return config;
 };
 
 export const saveConfig = (config: Partial<KnowtifConfig>) => {
     const current = getConfig();
     const updated = { ...current, ...config };
-    
+
     // Save non-sensitive data to project config
     const projectConfig = {
         events: updated.events,
@@ -159,26 +159,26 @@ export const saveConfig = (config: Partial<KnowtifConfig>) => {
         repoOwner: updated.repoOwner,
         repoName: updated.repoName,
     };
-    
+
     const projectPath = getProjectConfigPath();
     fs.writeFileSync(projectPath, JSON.stringify(projectConfig, null, 2));
-    
+
     // Save encrypted credentials to secure location
     if (updated.destinations && updated.destinations.length > 0) {
         const securePath = getSecureConfigPath();
         const secureDir = path.dirname(securePath);
-        
+
         if (!fs.existsSync(secureDir)) {
             fs.mkdirSync(secureDir, { recursive: true, mode: 0o700 });
         }
-        
+
         const secureConfig = {
             destinations: updated.destinations.map(encryptDestination),
         };
-        
+
         fs.writeFileSync(securePath, JSON.stringify(secureConfig, null, 2), { mode: 0o600 });
     }
-    
+
     return updated;
 };
 
@@ -219,13 +219,13 @@ export const getEnabledDestinations = (config: KnowtifConfig): Destination[] => 
 export const getActionConfig = () => {
     return {
         discord: process.env.DISCORD_WEBHOOK ? { webhook: process.env.DISCORD_WEBHOOK } : null,
-        pushover: process.env.PUSHOVER_USER && process.env.PUSHOVER_TOKEN 
+        pushover: process.env.PUSHOVER_USER && process.env.PUSHOVER_TOKEN
             ? { user: process.env.PUSHOVER_USER, token: process.env.PUSHOVER_TOKEN } : null,
-        ntfy: process.env.NTFY_TOPIC 
+        ntfy: process.env.NTFY_TOPIC
             ? { topic: process.env.NTFY_TOPIC, server: process.env.NTFY_SERVER || 'https://ntfy.sh' } : null,
-        email: process.env.SMTP_HOST 
+        email: process.env.SMTP_HOST
             ? { host: process.env.SMTP_HOST, port: process.env.SMTP_PORT, user: process.env.SMTP_USER, pass: process.env.SMTP_PASS, to: process.env.EMAIL_TO } : null,
-        webhook: process.env.WEBHOOK_URL 
+        webhook: process.env.WEBHOOK_URL
             ? { url: process.env.WEBHOOK_URL, secret: process.env.WEBHOOK_SECRET } : null,
     };
 };

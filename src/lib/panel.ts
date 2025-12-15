@@ -6,11 +6,11 @@ import { runSetup } from './setup';
 
 const showStatus = () => {
     const config = getConfig();
-    
+
     console.log();
     console.log(ui.colors.text.bold('  Destinations'));
     console.log();
-    
+
     if (config.destinations.length === 0) {
         console.log(ui.colors.muted('  No destinations configured'));
     } else {
@@ -21,7 +21,7 @@ const showStatus = () => {
             console.log(`  ${status} ${icon} ${name}`);
         }
     }
-    
+
     console.log();
     console.log(ui.colors.text.bold('  Events'));
     console.log();
@@ -76,7 +76,7 @@ const testDestination = async (dest: Destination) => {
 
 const manageDestinations = async () => {
     const config = getConfig();
-    
+
     if (config.destinations.length === 0) {
         console.log();
         ui.warn('No destinations configured. Add one first.');
@@ -145,7 +145,7 @@ const manageDestinations = async () => {
 
 const manageEvents = async () => {
     const config = getConfig();
-    
+
     const { events } = await inquirer.prompt([
         {
             type: 'checkbox',
@@ -175,9 +175,9 @@ const regenerateWorkflow = async () => {
 export const runControlPanel = async () => {
     ui.clear();
     ui.header();
-    
+
     const config = getConfig();
-    
+
     if (!config.installed || config.destinations.length === 0) {
         console.log(ui.colors.muted('  First time? Let\'s set up your notifications.\n'));
         await runSetup();

@@ -61,7 +61,7 @@ const setupDiscord = async () => {
     console.log();
     console.log(ui.box(`${ui.icons.discord} Discord Webhook Setup\n\n` +
         `${ui.colors.muted('1.')} Open Discord and go to your server\n` +
-        `${ui.colors.muted('2.')} Server Settings ${ui.icons.arrow} Integrations ${ui.icons.arrow} Webhooks\n` +
+        `${ui.colors.muted('2.')} Server Settings -> Integrations -> Webhooks\n` +
         `${ui.colors.muted('3.')} Click "New Webhook" and copy the URL`, { title: 'Discord', width: 55 }));
     console.log();
     const { webhook, name } = await inquirer_1.default.prompt([
