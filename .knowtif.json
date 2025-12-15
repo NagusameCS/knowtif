@@ -4,9 +4,7 @@
     "workflow_run",
     "deployment_status",
     "release",
-    "pull_request",
-    "issues",
-    "star"
+    "pull_request"
   ],
   "branches": [
     "main",
@@ -14,9 +12,5 @@
   ],
   "installed": true,
   "repoOwner": "NagusameCS",
-  "repoName": "knowtif",
-  "discord": {
-    "webhook": "https://discord.com/api/webhooks/1449999745358630954/CuBIFobTBxhy9zMhBraKAaBPSWt4Dae8qNUbZS2NWJsSntUVIcUauHm1e4PUt3hESkTD",
-    "enabled": true
-  }
+  "repoName": "knowtif"
 }

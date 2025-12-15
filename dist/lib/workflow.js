@@ -33,20 +33,23 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateWorkflow = void 0;
+exports.saveWorkflow = exports.generateWorkflow = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const config_1 = require("./config");
 const generateWorkflow = (config) => {
-    const events = buildEventTriggers(config.events, config.branches);
-    const env = buildEnvBlock(config);
-    const workflow = `# Knowtif - GitHub Notifications
-# Manage: npx knowtif
+    const cfg = config || (0, config_1.getConfig)();
+    const events = cfg.events || ['push', 'workflow_run'];
+    const branches = cfg.branches || ['main', 'master'];
+    const eventTriggers = buildEventTriggers(events, branches);
+    const envBlock = buildEnvBlock(cfg);
+    return `# Knowtif - GitHub Notifications
+# Docs: https://github.com/NagusameCS/knowtif
 
 name: Knowtif
 
 on:
-${events}
-
+${eventTriggers}
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -58,15 +61,21 @@ jobs:
       - run: npx knowtif@latest action
         env:
           GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
-${env}
+${envBlock}
 `;
+};
+exports.generateWorkflow = generateWorkflow;
+const saveWorkflow = (config) => {
+    const workflow = (0, exports.generateWorkflow)(config);
     const workflowDir = path.join(process.cwd(), '.github', 'workflows');
+    const workflowPath = path.join(workflowDir, 'knowtif.yml');
     if (!fs.existsSync(workflowDir)) {
         fs.mkdirSync(workflowDir, { recursive: true });
     }
-    fs.writeFileSync(path.join(workflowDir, 'knowtif.yml'), workflow);
+    fs.writeFileSync(workflowPath, workflow);
+    return workflowPath;
 };
-exports.generateWorkflow = generateWorkflow;
+exports.saveWorkflow = saveWorkflow;
 const buildEventTriggers = (events, branches) => {
     const branchArray = branches.map(b => `"${b}"`).join(', ');
     let triggers = '';
@@ -90,14 +99,14 @@ const buildEventTriggers = (events, branches) => {
     types: [opened, closed]
 `;
     }
-    if (events.includes('issues')) {
-        triggers += `  issues:
-    types: [opened, closed]
-`;
-    }
     if (events.includes('release')) {
         triggers += `  release:
     types: [published]
+`;
+    }
+    if (events.includes('issues')) {
+        triggers += `  issues:
+    types: [opened, closed]
 `;
     }
     if (events.includes('star')) {
@@ -105,32 +114,40 @@ const buildEventTriggers = (events, branches) => {
     types: [created]
 `;
     }
+    if (events.includes('fork')) {
+        triggers += `  fork:
+`;
+    }
     return triggers;
 };
 const buildEnvBlock = (config) => {
     const lines = [];
-    if (config.discord?.enabled && config.discord.webhook) {
-        lines.push(`          DISCORD_WEBHOOK: "${config.discord.webhook}"`);
-    }
-    if (config.pushover?.enabled && config.pushover.user && config.pushover.token) {
-        lines.push(`          PUSHOVER_USER: "${config.pushover.user}"`);
-        lines.push(`          PUSHOVER_TOKEN: "${config.pushover.token}"`);
-    }
-    if (config.ntfy?.enabled && config.ntfy.topic) {
-        lines.push(`          NTFY_TOPIC: "${config.ntfy.topic}"`);
-        lines.push(`          NTFY_SERVER: "${config.ntfy.server || 'https://ntfy.sh'}"`);
-    }
-    if (config.email?.enabled) {
-        lines.push(`          SMTP_HOST: "${config.email.host}"`);
-        lines.push(`          SMTP_PORT: "${config.email.port}"`);
-        lines.push(`          SMTP_USER: "${config.email.user}"`);
-        lines.push(`          SMTP_PASS: "${config.email.pass}"`);
-        lines.push(`          EMAIL_TO: "${config.email.to}"`);
-    }
-    if (config.webhook?.enabled && config.webhook.url) {
-        lines.push(`          WEBHOOK_URL: "${config.webhook.url}"`);
-        if (config.webhook.secret) {
-            lines.push(`          WEBHOOK_SECRET: "${config.webhook.secret}"`);
+    for (const dest of config.destinations.filter(d => d.enabled)) {
+        switch (dest.type) {
+            case 'discord':
+                lines.push(`          DISCORD_WEBHOOK: "${dest.config.webhook}"`);
+                break;
+            case 'pushover':
+                lines.push(`          PUSHOVER_USER: "${dest.config.user}"`);
+                lines.push(`          PUSHOVER_TOKEN: "${dest.config.token}"`);
+                break;
+            case 'ntfy':
+                lines.push(`          NTFY_TOPIC: "${dest.config.topic}"`);
+                lines.push(`          NTFY_SERVER: "${dest.config.server || 'https://ntfy.sh'}"`);
+                break;
+            case 'email':
+                lines.push(`          SMTP_HOST: "${dest.config.host}"`);
+                lines.push(`          SMTP_PORT: "${dest.config.port}"`);
+                lines.push(`          SMTP_USER: "${dest.config.user}"`);
+                lines.push(`          SMTP_PASS: "${dest.config.pass}"`);
+                lines.push(`          EMAIL_TO: "${dest.config.to}"`);
+                break;
+            case 'webhook':
+                lines.push(`          WEBHOOK_URL: "${dest.config.url}"`);
+                if (dest.config.secret) {
+                    lines.push(`          WEBHOOK_SECRET: "${dest.config.secret}"`);
+                }
+                break;
         }
     }
     if (config.healthCheckUrl) {

@@ -37,54 +37,99 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testNotifications = void 0;
-const chalk_1 = __importDefault(require("chalk"));
-const fs = __importStar(require("fs"));
-const path = __importStar(require("path"));
-const notify_1 = require("./notify");
+const axios_1 = __importDefault(require("axios"));
+const config_1 = require("./config");
+const ui = __importStar(require("./ui"));
+const testDestination = async (dest) => {
+    try {
+        switch (dest.type) {
+            case 'discord':
+                await axios_1.default.post(dest.config.webhook, {
+                    embeds: [{
+                            title: 'Knowtif Test',
+                            description: 'Your GitHub notifications are working!',
+                            color: 5763719,
+                            timestamp: new Date().toISOString(),
+                            footer: { text: 'Knowtif' },
+                        }]
+                });
+                return true;
+            case 'pushover':
+                await axios_1.default.post('https://api.pushover.net/1/messages.json', {
+                    token: dest.config.token,
+                    user: dest.config.user,
+                    title: 'Knowtif Test',
+                    message: 'Your GitHub notifications are working!',
+                    sound: 'magic',
+                });
+                return true;
+            case 'ntfy':
+                await axios_1.default.post(`${dest.config.server}/${dest.config.topic}`, 'Your GitHub notifications are working!', {
+                    headers: {
+                        'Title': 'Knowtif Test',
+                        'Priority': '3',
+                        'Tags': 'white_check_mark'
+                    },
+                });
+                return true;
+            case 'email':
+                // Email test is more complex, skip for now
+                return false;
+            case 'webhook':
+                await axios_1.default.post(dest.config.url, {
+                    title: 'Knowtif Test',
+                    message: 'Your GitHub notifications are working!',
+                    type: 'test',
+                    timestamp: new Date().toISOString(),
+                });
+                return true;
+        }
+        return false;
+    }
+    catch {
+        return false;
+    }
+};
 const testNotifications = async () => {
-    console.log(chalk_1.default.blue.bold('\n  Knowtif Test\n'));
-    // Read workflow file to get config
-    const workflowPath = path.join(process.cwd(), '.github', 'workflows', 'knowtif.yml');
-    if (!fs.existsSync(workflowPath)) {
-        console.log(chalk_1.default.red('  No knowtif.yml found. Run "npx knowtif install" first.\n'));
+    ui.clear();
+    ui.header();
+    const config = (0, config_1.getConfig)();
+    if (config.destinations.length === 0) {
+        ui.error('No destinations configured. Run "npx knowtif setup" first.');
         return;
     }
-    const content = fs.readFileSync(workflowPath, 'utf-8');
-    // Extract config from workflow
-    const discordMatch = content.match(/DISCORD_WEBHOOK:\s*"([^"]+)"/);
-    const ntfyTopicMatch = content.match(/NTFY_TOPIC:\s*"([^"]+)"/);
-    const ntfyServerMatch = content.match(/NTFY_SERVER:\s*"([^"]+)"/);
-    const pushoverUserMatch = content.match(/PUSHOVER_USER:\s*"([^"]+)"/);
-    const pushoverTokenMatch = content.match(/PUSHOVER_TOKEN:\s*"([^"]+)"/);
-    // Set env vars for notify module
-    if (discordMatch)
-        process.env.DISCORD_WEBHOOK = discordMatch[1];
-    if (ntfyTopicMatch)
-        process.env.NTFY_TOPIC = ntfyTopicMatch[1];
-    if (ntfyServerMatch)
-        process.env.NTFY_SERVER = ntfyServerMatch[1];
-    if (pushoverUserMatch)
-        process.env.PUSHOVER_USER = pushoverUserMatch[1];
-    if (pushoverTokenMatch)
-        process.env.PUSHOVER_TOKEN = pushoverTokenMatch[1];
-    // Pretend we're in GitHub Actions so notify uses env vars
-    process.env.GITHUB_ACTIONS = 'true';
-    process.env.GITHUB_REPOSITORY = 'test/repo';
-    process.env.GITHUB_SHA = 'abc123';
-    process.env.GITHUB_EVENT_NAME = 'test';
-    const channels = [];
-    if (discordMatch)
-        channels.push('Discord');
-    if (ntfyTopicMatch)
-        channels.push('ntfy.sh');
-    if (pushoverUserMatch && pushoverTokenMatch)
-        channels.push('Pushover');
-    if (channels.length === 0) {
-        console.log(chalk_1.default.yellow('  No notification channels configured.\n'));
+    const enabled = config.destinations.filter(d => d.enabled);
+    if (enabled.length === 0) {
+        ui.error('No enabled destinations. Enable one in the control panel.');
         return;
     }
-    console.log(chalk_1.default.gray(`  Sending test to: ${channels.join(', ')}\n`));
-    await (0, notify_1.sendNotification)('Test Notification', 'If you see this, Knowtif is working! Your GitHub notifications are configured.', notify_1.NotificationType.SUCCESS);
-    console.log(chalk_1.default.green('\n  Test complete! Check your notification channels.\n'));
+    console.log(ui.colors.text.bold('\n  Testing notifications...\n'));
+    for (const dest of enabled) {
+        const icon = getIcon(dest.type);
+        try {
+            const success = await ui.spinner(`Testing ${dest.name}`, async () => {
+                const result = await testDestination(dest);
+                if (!result)
+                    throw new Error('Failed');
+                return result;
+            });
+        }
+        catch {
+            // Error already shown by spinner
+        }
+    }
+    console.log();
+    ui.success('Test complete! Check your notification channels.');
+    console.log();
 };
 exports.testNotifications = testNotifications;
+const getIcon = (type) => {
+    switch (type) {
+        case 'discord': return ui.icons.discord;
+        case 'pushover': return ui.icons.phone;
+        case 'ntfy': return ui.icons.browser;
+        case 'email': return ui.icons.email;
+        case 'webhook': return ui.icons.webhook;
+        default: return ui.icons.bullet;
+    }
+};

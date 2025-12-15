@@ -49,10 +49,10 @@ export const box = (content: string, options: { title?: string; width?: number; 
     const { title, width = 60, padding = 1, borderColor = colors.primary } = options;
     const lines = content.split('\n');
     const innerWidth = width - 2;
-    
+
     const pad = ' '.repeat(padding);
     const emptyLine = borderColor(BOX.vertical) + ' '.repeat(innerWidth) + borderColor(BOX.vertical);
-    
+
     // Top border
     let result = borderColor(BOX.topLeft);
     if (title) {
@@ -65,27 +65,27 @@ export const box = (content: string, options: { title?: string; width?: number; 
         result += borderColor(BOX.horizontal.repeat(innerWidth));
     }
     result += borderColor(BOX.topRight) + '\n';
-    
+
     // Padding top
     for (let i = 0; i < padding; i++) {
         result += emptyLine + '\n';
     }
-    
+
     // Content
     for (const line of lines) {
         const stripped = line.replace(/\x1B\[[0-9;]*m/g, '');
         const paddingNeeded = innerWidth - stripped.length - (padding * 2);
         result += borderColor(BOX.vertical) + pad + line + ' '.repeat(Math.max(0, paddingNeeded)) + pad + borderColor(BOX.vertical) + '\n';
     }
-    
+
     // Padding bottom
     for (let i = 0; i < padding; i++) {
         result += emptyLine + '\n';
     }
-    
+
     // Bottom border
     result += borderColor(BOX.bottomLeft) + borderColor(BOX.horizontal.repeat(innerWidth)) + borderColor(BOX.bottomRight);
-    
+
     return result;
 };
 
@@ -138,12 +138,12 @@ export const warn = (message: string) => {
 export const spinner = async <T>(message: string, fn: () => Promise<T>): Promise<T> => {
     const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
     let i = 0;
-    
+
     const interval = setInterval(() => {
         process.stdout.write(`\r  ${colors.primary(frames[i])} ${colors.muted(message)}`);
         i = (i + 1) % frames.length;
     }, 80);
-    
+
     try {
         const result = await fn();
         clearInterval(interval);
@@ -158,10 +158,10 @@ export const spinner = async <T>(message: string, fn: () => Promise<T>): Promise
 
 export const table = (data: { label: string; value: string; status?: boolean }[]) => {
     const maxLabel = Math.max(...data.map(d => d.label.length));
-    
+
     for (const row of data) {
         const label = colors.muted(row.label.padEnd(maxLabel));
-        const status = row.status !== undefined 
+        const status = row.status !== undefined
             ? (row.status ? colors.success(' ✓') : colors.error(' ✗'))
             : '';
         console.log(`  ${label}  ${colors.text(row.value)}${status}`);

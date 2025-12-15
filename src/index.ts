@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import chalk from 'chalk';
-import { runSetup, runControlPanel, runTest } from './lib/panel';
 import { runAction } from './lib/action';
-import { getConfig } from './lib/config';
+import { runSetup } from './lib/setup';
+import { runControlPanel } from './lib/panel';
 
 const program = new Command();
 
@@ -36,7 +35,8 @@ program
     .command('test')
     .description('Send a test notification')
     .action(async () => {
-        await runTest();
+        const { testNotifications } = await import('./lib/test');
+        await testNotifications();
     });
 
 // Action - GitHub Actions internal command
@@ -45,32 +45,6 @@ program
     .description('(internal) Run in GitHub Actions')
     .action(async () => {
         await runAction();
-    });
-
-// Status - Quick view of config
-program
-    .command('status')
-    .description('Show current configuration')
-    .action(async () => {
-        const config = getConfig();
-        console.log(chalk.blue.bold('\n  Knowtif Status\n'));
-
-        if (!config.installed) {
-            console.log(chalk.yellow('  Not configured. Run: knowtif setup\n'));
-            return;
-        }
-
-        console.log(chalk.white('  Events:'));
-        config.events.forEach(e => console.log(chalk.gray(`    - ${e}`)));
-
-        console.log(chalk.white('\n  Destinations:'));
-        if (config.discord?.enabled) console.log(chalk.green('    - Discord'));
-        if (config.pushover?.enabled) console.log(chalk.green('    - Pushover'));
-        if (config.ntfy?.enabled) console.log(chalk.green(`    - ntfy.sh (${config.ntfy.topic})`));
-        if (config.email?.enabled) console.log(chalk.green(`    - Email (${config.email.to})`));
-        if (config.webhook?.enabled) console.log(chalk.green('    - Webhook'));
-
-        console.log('');
     });
 
 program.parse();
