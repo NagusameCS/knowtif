@@ -1,90 +1,76 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { setupConfig, getConfig } from './lib/config';
-import { watchRepository } from './lib/monitor';
-import { installWorkflow } from './lib/installer';
+import { runSetup, runControlPanel, runTest } from './lib/panel';
 import { runAction } from './lib/action';
+import { getConfig } from './lib/config';
 
 const program = new Command();
 
 program
     .name('knowtif')
-    .description('CLI to monitor GitHub events and notify you')
+    .description('GitHub notifications to Discord, Phone, Browser, and more')
     .version('1.0.0');
 
+// Default command - Control Panel
+program
+    .action(async () => {
+        if (process.env.GITHUB_ACTIONS) {
+            await runAction();
+            return;
+        }
+        await runControlPanel();
+    });
+
+// Setup - First time configuration
 program
     .command('setup')
-    .description('Configure GitHub token, notification channels, and local repo settings')
+    .alias('install')
+    .description('Configure Knowtif from scratch')
     .action(async () => {
-        await setupConfig();
+        await runSetup();
     });
 
+// Test - Send a test notification
 program
-    .command('install')
-    .description('Install Knowtif as a GitHub Action in this repository')
+    .command('test')
+    .description('Send a test notification')
     .action(async () => {
-        await installWorkflow();
+        await runTest();
     });
 
+// Action - GitHub Actions internal command
 program
     .command('action')
-    .description('Run in GitHub Action mode (internal use)')
+    .description('(internal) Run in GitHub Actions')
     .action(async () => {
         await runAction();
     });
 
+// Status - Quick view of config
 program
-    .command('test')
-    .description('Send a test notification to verify your setup')
+    .command('status')
+    .description('Show current configuration')
     .action(async () => {
-        const { testNotifications } = await import('./lib/test');
-        await testNotifications();
-    });
-
-// Default action (watch)
-program
-    .action(async (options) => {
-        // If running in GitHub Actions, default to 'action' command logic if not specified?
-        // But usually actions call specific commands.
-        // If user runs `knowtif` locally, we assume they want to watch.
-
-        if (process.env.GITHUB_ACTIONS) {
-            console.log('Detected GitHub Actions environment. Running action logic...');
-            await runAction();
+        const config = getConfig();
+        console.log(chalk.blue.bold('\n  Knowtif Status\n'));
+        
+        if (!config.installed) {
+            console.log(chalk.yellow('  Not configured. Run: knowtif setup\n'));
             return;
         }
 
-        // Check if configured
-        const config = getConfig();
-        if (!config.githubToken) {
-            console.log(chalk.yellow('Knowtif is not configured. Running setup...'));
-            await setupConfig();
-        }
-
-        try {
-            // Pass empty options, watchRepository will pick up defaults and local config
-            await watchRepository({});
-        } catch (error: any) {
-            console.error(chalk.red('Error:'), error.message);
-            process.exit(1);
-        }
-    });
-
-// Keep the explicit watch command for advanced usage (overriding defaults)
-program
-    .command('watch')
-    .description('Watch the current repository (explicit command)')
-    .option('-r, --repo <repo>', 'Repository in format owner/name (defaults to current git repo)')
-    .option('-b, --branch <branch>', 'Branch to watch (defaults to current git branch)')
-    .option('-u, --url <url>', 'Health check URL to monitor after deployment')
-    .action(async (options) => {
-        try {
-            await watchRepository(options);
-        } catch (error: any) {
-            console.error(chalk.red('Error:'), error.message);
-            process.exit(1);
-        }
+        console.log(chalk.white('  Events:'));
+        config.events.forEach(e => console.log(chalk.gray(`    - ${e}`)));
+        
+        console.log(chalk.white('\n  Destinations:'));
+        if (config.discord?.enabled) console.log(chalk.green('    - Discord'));
+        if (config.pushover?.enabled) console.log(chalk.green('    - Pushover'));
+        if (config.ntfy?.enabled) console.log(chalk.green(`    - ntfy.sh (${config.ntfy.topic})`));
+        if (config.email?.enabled) console.log(chalk.green(`    - Email (${config.email.to})`));
+        if (config.webhook?.enabled) console.log(chalk.green('    - Webhook'));
+        
+        console.log('');
     });
 
 program.parse();
