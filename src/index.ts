@@ -34,6 +34,14 @@ program
         await runAction();
     });
 
+program
+    .command('test')
+    .description('Send a test notification to verify your setup')
+    .action(async () => {
+        const { testNotifications } = await import('./lib/test');
+        await testNotifications();
+    });
+
 // Default action (watch)
 program
     .action(async (options) => {
