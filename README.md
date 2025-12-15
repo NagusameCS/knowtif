@@ -1,11 +1,11 @@
 # Knowtif
 
-![Lines](.linehook/badges/lines.svg)
-![Files](.linehook/badges/files.svg)
-![Code](.linehook/badges/code.svg)
-![Chars](.linehook/badges/chars.svg)
+![Lines](https://raw.githubusercontent.com/NagusameCS/knowtif/main/.linehook/badges/lines.svg)
+![Files](https://raw.githubusercontent.com/NagusameCS/knowtif/main/.linehook/badges/files.svg)
+![Code](https://raw.githubusercontent.com/NagusameCS/knowtif/main/.linehook/badges/code.svg)
+![Chars](https://raw.githubusercontent.com/NagusameCS/knowtif/main/.linehook/badges/chars.svg)
 
-![Stats Card](.linehook/stats-card.svg)
+![Stats Card](https://raw.githubusercontent.com/NagusameCS/knowtif/main/.linehook/stats-card.svg)
 
 **Get notified when your GitHub changes propagate.** Push, CI, Deploy, Health Check - all in one command.
 
