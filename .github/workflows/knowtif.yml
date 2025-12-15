@@ -7,6 +7,12 @@ name: Knowtif Monitor
 on:
   push:
     branches: [ "main", "master" ]
+  workflow_run:
+    workflows: ["*"]
+    types: [completed]
+  deployment_status:
+  release:
+    types: [published]
 
 
 jobs:
@@ -24,16 +30,5 @@ jobs:
         run: npx knowtif@latest action
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DISCORD_WEBHOOK: ${{ secrets.KNOWTIF_DISCORD_WEBHOOK }}
-          PUSHOVER_USER: ${{ secrets.KNOWTIF_PUSHOVER_USER }}
-          PUSHOVER_TOKEN: ${{ secrets.KNOWTIF_PUSHOVER_TOKEN }}
-          SMTP_HOST: ${{ secrets.KNOWTIF_SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.KNOWTIF_SMTP_PORT }}
-          SMTP_USER: ${{ secrets.KNOWTIF_SMTP_USER }}
-          SMTP_PASS: ${{ secrets.KNOWTIF_SMTP_PASS }}
-          EMAIL_TO: ${{ secrets.KNOWTIF_EMAIL_TO }}
-          NTFY_TOPIC: ${{ secrets.KNOWTIF_NTFY_TOPIC }}
-          NTFY_SERVER: ${{ secrets.KNOWTIF_NTFY_SERVER }}
-          WEBHOOK_URL: ${{ secrets.KNOWTIF_WEBHOOK_URL }}
-          WEBHOOK_SECRET: ${{ secrets.KNOWTIF_WEBHOOK_SECRET }}
-          HEALTH_CHECK_URL: ""
+          NTFY_TOPIC: "knowtif-knowtif-cb3e6a5c"
+          NTFY_SERVER: "https://ntfy.sh"
