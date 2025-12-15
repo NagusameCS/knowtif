@@ -116,23 +116,17 @@
         }
 
         .logo {
-            font-family: 'Space Mono', monospace;
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--text);
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
         }
 
-        .logo::before {
-            content: '>';
-            color: var(--purple);
+        .logo img {
+            transition: transform 0.2s;
         }
 
-        .logo span {
-            color: var(--purple);
+        .logo:hover img {
+            transform: scale(1.1);
         }
 
         .nav-links {
@@ -595,9 +589,209 @@
             color: var(--purple);
         }
 
+        /* Extension section */
+        .extension-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .extension-feature {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            transition: all 0.2s;
+        }
+
+        .extension-feature:hover {
+            border-color: var(--purple-dim);
+            transform: translateY(-2px);
+        }
+
+        .extension-icon {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .extension-feature h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .extension-feature p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .extension-stores {
+            background: var(--dark);
+            border: 1px solid var(--border);
+            padding: 2rem;
+        }
+
+        .extension-stores h4 {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-xdim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+        }
+
+        .store-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .store-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.75rem 1.25rem;
+            text-decoration: none;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .store-link:hover {
+            border-color: var(--purple);
+            background: var(--surface-2);
+        }
+
+        .store-link.coming-soon {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        .store-link.coming-soon:hover {
+            border-color: var(--border);
+            background: var(--surface);
+        }
+
+        .store-link .badge {
+            font-size: 0.65rem;
+            background: var(--purple-dim);
+            color: var(--text);
+            padding: 0.15rem 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .github-link:hover {
+            color: var(--purple);
+        }
+
+        /* Coming Soon Popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup {
+            position: fixed;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            border: 1px solid var(--purple-dim);
+            padding: 2rem 3rem;
+            z-index: 1001;
+            text-align: center;
+            transition: top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 60px rgba(183, 148, 246, 0.2);
+        }
+
+        .popup.active {
+            top: 80px;
+        }
+
+        .popup::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple), var(--cyan));
+        }
+
+        .popup-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .popup h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--purple);
+        }
+
+        .popup p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .popup-close {
+            font-family: 'Space Mono', monospace;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 1.5rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .popup-close:hover {
+            border-color: var(--purple);
+            background: var(--surface-2);
+        }
+
         /* Responsive */
         @media (max-width: 900px) {
             .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .extension-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -628,10 +822,10 @@
     <nav>
         <div class="container">
             <a href="#" class="logo"><img src="https://raw.githubusercontent.com/NagusameCS/knowtif/main/favicon.png"
-                    alt="knowtif"
-                    style="height: 24px; margin-right: 8px; vertical-align: middle;">know<span>tif</span></a>
+                    alt="knowtif" style="height: 28px; vertical-align: middle;"></a>
             <div class="nav-links">
                 <a href="#features">features</a>
+                <a href="#extension">extension</a>
                 <a href="#channels">channels</a>
                 <a href="#events">events</a>
                 <a href="https://www.npmjs.com/package/knowtif">npm</a>
@@ -723,9 +917,80 @@
             </div>
         </section>
 
-        <section id="channels">
+        <section id="extension">
             <div class="section-header">
                 <span class="section-num">02</span>
+                <h2>Browser Extension</h2>
+            </div>
+
+            <p style="color: var(--text-dim); margin-bottom: 2rem; max-width: 600px;">
+                Get knowtif notifications directly in your browser. Real-time alerts without leaving your workflow.
+            </p>
+
+            <div class="extension-grid">
+                <div class="extension-feature">
+                    <div class="extension-icon">🔔</div>
+                    <h3>Native Notifications</h3>
+                    <p>Browser push notifications for all your GitHub events</p>
+                </div>
+                <div class="extension-feature">
+                    <div class="extension-icon">⚡</div>
+                    <h3>Instant Updates</h3>
+                    <p>Real-time alerts as your CI runs and deployments complete</p>
+                </div>
+                <div class="extension-feature">
+                    <div class="extension-icon">🎯</div>
+                    <h3>Smart Filtering</h3>
+                    <p>Customize which events trigger notifications</p>
+                </div>
+                <div class="extension-feature">
+                    <div class="extension-icon">🔒</div>
+                    <h3>Privacy First</h3>
+                    <p>No data collection - everything stays in your browser</p>
+                </div>
+            </div>
+
+            <div class="extension-stores">
+                <h4>Available for</h4>
+                <div class="store-links">
+                    <a href="#" class="store-link coming-soon" title="Coming Soon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm0 22c-5.5 0-10-4.5-10-10S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10zm4.8-15.2L9.6 12l7.2 5.2V6.8z" />
+                        </svg>
+                        Firefox
+                        <span class="badge">soon</span>
+                    </a>
+                    <a href="#" class="store-link coming-soon" title="Coming Soon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M5.4 3.5L1 12l4.4 8.5L12 12 5.4 3.5zM12 4.5l-5.4 7.5h10.8L12 4.5zm5.4 8.5L12 20.5l5.4-8zm-5.4 3l-5.4-3h10.8l-5.4 3zM23 12l-4.4 8.5L12 12l6.6-8.5L23 12z" />
+                        </svg>
+                        Edge
+                        <span class="badge">soon</span>
+                    </a>
+                    <a href="#" class="store-link coming-soon" title="Coming Soon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 2.4c5.292 0 9.6 4.308 9.6 9.6 0 5.292-4.308 9.6-9.6 9.6-5.292 0-9.6-4.308-9.6-9.6 0-5.292 4.308-9.6 9.6-9.6zm0 1.2c-4.632 0-8.4 3.768-8.4 8.4s3.768 8.4 8.4 8.4 8.4-3.768 8.4-8.4-3.768-8.4-8.4-8.4z" />
+                        </svg>
+                        Opera
+                        <span class="badge">soon</span>
+                    </a>
+                </div>
+                <a href="https://github.com/NagusameCS/knowtif-extension" class="github-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                    </svg>
+                    View extension source on GitHub
+                </a>
+            </div>
+        </section>
+
+        <section id="channels">
+            <div class="section-header">
+                <span class="section-num">03</span>
                 <h2>Channels</h2>
             </div>
 
@@ -760,7 +1025,7 @@
 
         <section id="events">
             <div class="section-header">
-                <span class="section-num">03</span>
+                <span class="section-num">04</span>
                 <h2>Events</h2>
             </div>
 
@@ -818,7 +1083,7 @@
 
         <section>
             <div class="section-header">
-                <span class="section-num">04</span>
+                <span class="section-num">05</span>
                 <h2>Quick Start</h2>
             </div>
 
@@ -858,6 +1123,46 @@
                     href="https://github.com/NagusameCS/knowtif">github</a></p>
         </div>
     </footer>
+
+    <!-- Coming Soon Popup -->
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="popup" id="popup">
+        <div class="popup-icon">🚀</div>
+        <h3>Coming Soon</h3>
+        <p>The browser extension is under development.<br>Check back soon!</p>
+        <button class="popup-close" id="popupClose">Got it</button>
+    </div>
+
+    <script>
+        (function () {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('popupOverlay');
+            const closeBtn = document.getElementById('popupClose');
+            const comingSoonLinks = document.querySelectorAll('.store-link.coming-soon');
+
+            function showPopup(e) {
+                e.preventDefault();
+                popup.classList.add('active');
+                overlay.classList.add('active');
+            }
+
+            function hidePopup() {
+                popup.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+
+            comingSoonLinks.forEach(link => {
+                link.addEventListener('click', showPopup);
+            });
+
+            closeBtn.addEventListener('click', hidePopup);
+            overlay.addEventListener('click', hidePopup);
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') hidePopup();
+            });
+        })();
+    </script>
 </body>
 
 </html>
